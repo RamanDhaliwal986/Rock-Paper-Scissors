@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rock, Paper, Scissors Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9e6e6;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      max-width: 400px;
+      padding: 20px;
+      background-color: #d7e8c8;
+      border: 2px solid #9cd8f0;
+      border-radius: 8px;
+      text-align: center;
+    }
+    img {
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    .result {
+      font-size: 20px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Welcome Screen -->
+  <div class="container" id="welcomeScreen">
+    <h2>Welcome to Rock, Paper, Scissors</h2>
+    <p>Enter your name to start:</p>
+    <input type="text" id="username" placeholder="Your Name">
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <!-- Game Screen -->
+  <div class="container hidden" id="gameScreen">
+    <h2>Rock, Paper, Scissors</h2>
+    <p id="welcomeMessage"></p>
+    <p>Choose your move:</p>
+    <!-- Image buttons for choices -->
+    <img src="rock.jpg" alt="Rock" onclick="playRound('rock')">
+    <img src="paper.jpg" alt="Paper" onclick="playRound('paper')">
+    <img src="scio.jpg" alt="Scissors" onclick="playRound('scissors')">
+
+    <div class="result" id="result"></div>
+    <p id="score">Player: 0 | Computer: 0</p>
+  </div>
+
+  <!-- Final Screen -->
+  <div class="container hidden" id="finalScreen">
+    <h2>Game Over</h2>
+    <div class="result" id="finalResult"></div>
+    <button onclick="resetGame()">New Game</button>
+  </div>
+
+  <script>
+    let playerScore = 0;
+    let computerScore = 0;
+    let playerName = "";
+    let roundsPlayed = 0;
+    const maxRounds = 5;
+
+    function startGame() {
+      playerName = document.getElementById("username").value.trim();
+      if (playerName) {
+        document.getElementById("welcomeScreen").classList.add("hidden");
+        document.getElementById("gameScreen").classList.remove("hidden");
+        document.getElementById("welcomeMessage").textContent = `Welcome, ${playerName}! Let's play.`;
+        updateScore();
+      } else {
+        alert("Please enter your name to start the game.");
+      }
+    }
+
+    function getComputerChoice() {
+      const choices = ['rock', 'paper', 'scissors'];
+      return choices[Math.floor(Math.random() * choices.length)];
+    }
+
+    function playRound(playerChoice) {
+      if (roundsPlayed >= maxRounds) {
+        displayFinalResult();
+        return;
+      }
+
+      const computerChoice = getComputerChoice();
+      let resultMessage = `${playerName}, you chose ${playerChoice}. Computer chose ${computerChoice}.`;
+
+      if (playerChoice === computerChoice) {
+        resultMessage += " It's a tie!";
+      } else if (
+        (playerChoice === 'rock' && computerChoice === 'scissors') ||
+        (playerChoice === 'scissors' && computerChoice === 'paper') ||
+        (playerChoice === 'paper' && computerChoice === 'rock')
+      ) {
+        resultMessage += " You win this round!";
+        playerScore++;
+      } else {
+        resultMessage += " Computer wins this round!";
+        computerScore++;
+      }
+
+      roundsPlayed++;
+      document.getElementById("result").textContent = resultMessage;
+      updateScore();
+
+      if (roundsPlayed >= maxRounds) {
+        displayFinalResult();
+      }
+    }
+
+    function updateScore() {
+      document.getElementById("score").textContent = `${playerName}: ${playerScore} | Computer: ${computerScore}`;
+    }
+
+    function displayFinalResult() {
+      let finalMessage = "";
+      if (playerScore > computerScore) {
+        finalMessage = `Congratulations, ${playerName}! You won the game ${playerScore} to ${computerScore}.`;
+      } else if (computerScore > playerScore) {
+        finalMessage = `Sorry, ${playerName}. The computer won the game ${computerScore} to ${playerScore}.`;
+      } else {
+        finalMessage = `It's a tie! Both you and the computer scored ${playerScore}.`;
+      }
+
+      document.getElementById("gameScreen").classList.add("hidden");
+      document.getElementById("finalScreen").classList.remove("hidden");
+      document.getElementById("finalResult").textContent = finalMessage;
+    }
+
+    function resetGame() {
+      playerScore = 0;
+      computerScore = 0;
+      roundsPlayed = 0;
+      document.getElementById("username").value = "";
+      document.getElementById("finalScreen").classList.add("hidden");
+      document.getElementById("welcomeScreen").classList.remove("hidden");
+      updateScore();
+    }
+  </script>
+
+</body>
+</html>
